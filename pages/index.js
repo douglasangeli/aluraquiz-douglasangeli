@@ -39,7 +39,7 @@ export default function Home() {
 
         <Footer></Footer>
       </QuizContainer>
-      <GitHubCorner projectUrl="https://github.com/douglasangeli"></GitHubCorner>
+      <GitHubCorner projectUrl="https://github.com/douglasangeli/aluraquiz-douglasangeli"></GitHubCorner>
     </QuizBackground>
   );
 }
