@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
@@ -8,17 +7,10 @@ import Widget from '../src/components/Widget';
 import QuizBackground from '../src/components/QuizBackground';
 import Footer from '../src/components/Footer';
 import GitHubCorner from '../src/components/GitHubCorner';
+import Input from '../src/components/Input';
+import Button from '../src/components/Button';
+import QuizContainer from '../src/components/QuizContainer';
 
-export const QuizContainer = styled.div`
-  width: 100%;
-  max-width: 350px;
-  padding-top: 45px;
-  margin: auto 10%;
-  @media screen and (max-width: 500px) {
-    margin: auto;
-    padding: 15px;
-  }
-`;
 
 export default function Home() {
   const router = useRouter();
@@ -36,19 +28,20 @@ export default function Home() {
           </Widget.Header>
           <Widget.Content>
             <p>{db.description}</p>
-            <form
-              onSubmit={(infosDoEvento) => {
-                infosDoEvento.preventDefault();
-                console.log('Fazendo uma submissão por meio do React', infosDoEvento);
-                router.push(`quiz?name=${name}`);
-              }}
+            <form onSubmit={(infosDoEvento) => {
+              infosDoEvento.preventDefault();
+              router.push(`quiz?name=${name}`);
+            }}
             >
-              <input 
+              <Input
+                name="nomeDoUsuario"
                 onChange={(infosDoEvento) => setName(infosDoEvento.target.value)}
-                placeholder="Diz aí seu nome" />
-              <button type="submit" disabled={name.length === 0}>
-                Jogar {name}
-              </button>
+                placeholder="Diz aí seu nome"
+                value={name}
+              />
+              <Button type="submit" disabled={name.length === 0}>
+                {`Jogar ${name}`}
+              </Button>
             </form>
           </Widget.Content>
         </Widget>
@@ -62,7 +55,7 @@ export default function Home() {
         </Widget>
         <Footer />
       </QuizContainer>
-      <GitHubCorner projectUrl='https://github.com/douglasangeli/aluraquiz-douglasangeli' />
+      <GitHubCorner projectUrl="https://github.com/douglasangeli/aluraquiz-douglasangeli" />
     </QuizBackground>
   );
 }
