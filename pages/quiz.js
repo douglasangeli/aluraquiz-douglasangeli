@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
 import db from '../db.json';
@@ -22,11 +23,18 @@ function LoadingWidget() {
 }
 
 function ResultWidget({ results }) {
+  const {
+    query: { name },
+  } = useRouter();
   return (
     <Widget>
       <Widget.Header>Tela de Resultado</Widget.Header>
       <Widget.Content>
         <p>
+          Boa
+          {' '}
+          {name}
+          {'! '}
           Você acertou
           {' '}
           {results.filter((result) => result).length}
