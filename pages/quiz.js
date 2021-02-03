@@ -3,11 +3,14 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 import db from '../db.json';
+
 import Widget from '../src/components/Widget';
 import QuizBackground from '../src/components/QuizBackground';
 import GitHubCorner from '../src/components/GitHubCorner';
 import Button from '../src/components/Button';
 import QuizContainer from '../src/components/QuizContainer';
+import QuizLogo from '../src/components/QuizLogo';
+import AlternativesForm from '../src/components/AlternativesForm';
 
 function LoadingWidget() {
   return (
@@ -18,13 +21,58 @@ function LoadingWidget() {
   );
 }
 
-function QuestionWidget({ totalQuestions, questionIndex, question, onSubmit }) {
+function ResultWidget({ results }) {
+  return (
+    <Widget>
+      <Widget.Header>Tela de Resultado</Widget.Header>
+      <Widget.Content>
+        <p>
+          Você acertou
+          {' '}
+          {results.filter((result) => result).length}
+          {' '}
+          perguntas
+        </p>
+        <ul>
+          {results.map((result, resultIndex) => {
+            const resultId = `result__${resultIndex}`;
+            return (
+              <li
+                id={resultId}
+                key={resultId}
+              >
+                #
+                {resultIndex + 1}
+                {' '}
+                Resultado:
+                {result === true ? ' Acertou' : ' Errou'}
+              </li>
+            );
+          })}
+        </ul>
+      </Widget.Content>
+    </Widget>
+  );
+}
+
+function QuestionWidget({
+  question,
+  questionIndex,
+  totalQuestions,
+  onSubmit,
+  addResult,
+}) {
+  const [selectedAlternative, setSelectedAlternative] = React.useState(undefined);
+  const [isQuestionSubmited, setIsQuestionSubmited] = React.useState(false);
   const questionId = `question__${questionIndex}`;
+  const isCorrect = selectedAlternative === question.answer;
+  const hasAlternativeSelected = selectedAlternative !== undefined;
+
   return (
     <Widget>
       <Widget.Header>
         <h3>
-          {`Pergunta ${questionIndex + 1} de ${db.questions.length}`}
+          {`Pergunta ${questionIndex + 1} de ${totalQuestions}`}
         </h3>
       </Widget.Header>
       <img
@@ -40,29 +88,46 @@ function QuestionWidget({ totalQuestions, questionIndex, question, onSubmit }) {
         <h2>{question.title}</h2>
         <p>{question.description}</p>
 
-        <form onSubmit={(infosDoEvento) => {
+        <AlternativesForm onSubmit={(infosDoEvento) => {
           infosDoEvento.preventDefault();
-          onSubmit();
+          setIsQuestionSubmited(true);
+          setTimeout(() => {
+            addResult(isCorrect);
+            onSubmit();
+            setIsQuestionSubmited(false);
+            setSelectedAlternative(undefined);
+          }, 3 * 1000);
         }}
         >
           {question.alternatives.map((alternative, alternativeIndex) => {
             const alternativeId = `alternative__${alternativeIndex}`;
+            const alternativeStatus = isCorrect ? 'SUCCESS' : 'ERROR';
+            const isSelected = selectedAlternative === alternativeIndex;
             return (
               <Widget.Topic
                 as="label"
-                htmlFor={alternativeId}>
+                key={alternativeId}
+                htmlFor={alternativeId}
+                data-selected={isSelected}
+                data-status={isQuestionSubmited && alternativeStatus}
+              >
                 <input
-                  style={{display: 'none' }}
+                  style={{ display: 'none' }}
                   id={alternativeId}
                   name={questionId}
+                  onChange={() => setSelectedAlternative(alternativeIndex)}
                   type="radio"
                 />
                 {alternative}
               </Widget.Topic>
             );
           })}
-          <Button type="submit">Confirmar</Button>
-        </form>
+          <Button type="submit" disabled={!hasAlternativeSelected}>
+            Confirmar
+          </Button>
+          {isQuestionSubmited && isCorrect && <p>Você acertou!</p>}
+          {isQuestionSubmited && !isCorrect && <p>Você errou!</p>}
+        </AlternativesForm>
 
       </Widget.Content>
     </Widget>
@@ -77,10 +142,18 @@ const screenStates = {
 
 export default function QuizPage() {
   const [screenState, setScreenState] = React.useState(screenStates.LOADING);
+  const [results, setResults] = React.useState([]);
   const totalQuestions = db.questions.length;
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const questionIndex = currentQuestion;
   const question = db.questions[questionIndex];
+
+  function addResult(result) {
+    setResults([
+      ...results,
+      result,
+    ]);
+  }
 
   React.useEffect(() => {
     // fetch() ...
@@ -105,6 +178,7 @@ export default function QuizPage() {
         <title>AluraQuiz - Douglas Angeli</title>
       </Head>
       <QuizContainer>
+        <QuizLogo />
 
         {screenState === screenStates.QUIZ && (
           <QuestionWidget
@@ -112,19 +186,27 @@ export default function QuizPage() {
             questionIndex={questionIndex}
             question={question}
             onSubmit={handleSubmitQuiz}
+            addResult={addResult}
           />
         )}
 
         {screenState === screenStates.LOADING && <LoadingWidget /> }
 
-        {screenState === screenStates.RESULT && <div>Você acertou X questões, parabéns!</div> }
+        {screenState === screenStates.RESULT && <ResultWidget results={results} /> }
       </QuizContainer>
       <GitHubCorner projectUrl="https://github.com/douglasangeli/aluraquiz-douglasangeli" />
     </QuizBackground>
   );
 }
 
+ResultWidget.propTypes = {
+  results: PropTypes.oneOfType([PropTypes.array]).isRequired,
+};
+
 QuestionWidget.propTypes = {
-  question: PropTypes.oneOf(['totalQuestions', 'questionIndex', 'question', 'onSubmit'])
-    .isRequired,
+  totalQuestions: PropTypes.number.isRequired,
+  questionIndex: PropTypes.number.isRequired,
+  question: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  addResult: PropTypes.func.isRequired,
 };
