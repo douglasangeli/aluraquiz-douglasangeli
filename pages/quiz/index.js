@@ -2,22 +2,32 @@ import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { Lottie } from '@crello/react-lottie';
 
-import db from '../db.json';
+import db from '../../db.json';
 
-import Widget from '../src/components/Widget';
-import QuizBackground from '../src/components/QuizBackground';
-import GitHubCorner from '../src/components/GitHubCorner';
-import Button from '../src/components/Button';
-import QuizContainer from '../src/components/QuizContainer';
-import QuizLogo from '../src/components/QuizLogo';
-import AlternativesForm from '../src/components/AlternativesForm';
+import Widget from '../../src/components/Widget';
+import QuizBackground from '../../src/components/QuizBackground';
+import Button from '../../src/components/Button';
+import QuizContainer from '../../src/components/QuizContainer';
+import QuizLogo from '../../src/components/QuizLogo';
+import AlternativesForm from '../../src/components/AlternativesForm';
+import BackLinkArrow from '../../src/components/BackLinkArrow';
+
+import loadingAnimation from '../../src/screens/Quiz/animations/rocket-launch-line-animation.json';
 
 function LoadingWidget() {
   return (
     <Widget>
       <Widget.Header>Carregando...</Widget.Header>
-      <Widget.Content>[Desafio do Loading]</Widget.Content>
+      <Widget.Content style={{ display: 'flex', justifyContent: 'center' }}>
+        <Lottie
+          width="200px"
+          height="200px"
+          className="lottie-container basic"
+          config={{ animationData: loadingAnimation, loop: true, autoplay: true }}
+        />
+      </Widget.Content>
     </Widget>
   );
 }
@@ -79,6 +89,7 @@ function QuestionWidget({
   return (
     <Widget>
       <Widget.Header>
+        <BackLinkArrow href="/" />
         <h3>
           {`Pergunta ${questionIndex + 1} de ${totalQuestions}`}
         </h3>
@@ -202,7 +213,6 @@ export default function QuizPage() {
 
         {screenState === screenStates.RESULT && <ResultWidget results={results} /> }
       </QuizContainer>
-      <GitHubCorner projectUrl="https://github.com/douglasangeli/aluraquiz-douglasangeli" />
     </QuizBackground>
   );
 }
