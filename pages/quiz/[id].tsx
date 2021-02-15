@@ -1,10 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { ThemeProvider } from 'styled-components';
 
 import QuizScreen from '../../src/screens/Quiz';
+import { GetServerSideProps } from 'next';
 
-export default function QuizDaGaleraPage({ dbExterno }) {
+interface QuizDaGaleraPageProps {
+  dbExterno: any;
+}
+
+export default function QuizDaGaleraPage({ dbExterno }: QuizDaGaleraPageProps) {
   return (
     <ThemeProvider theme={dbExterno.theme}>
       <QuizScreen
@@ -15,13 +19,9 @@ export default function QuizDaGaleraPage({ dbExterno }) {
   );
 }
 
-QuizDaGaleraPage.propTypes = {
-  dbExterno: PropTypes.oneOfType([PropTypes.object]).isRequired,
-};
-
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
-  const [projectName, gitHubUser] = id.split('___');
+  const [projectName, gitHubUser] = id['split']('___');
 
   const dbExterno = await fetch(`https://${projectName}.${gitHubUser}.vercel.app/api/db`)
     .then((respostaDoServer) => {

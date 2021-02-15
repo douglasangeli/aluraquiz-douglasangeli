@@ -1,8 +1,12 @@
 import React from 'react';
 import NextLink from 'next/link';
-import PropTypes from 'prop-types';
 
-export default function Link({ children, href, ...props }) {
+interface LinkProps {
+  href: string;
+  children: any;
+}
+
+export default function Link({ children, href, ...props }: LinkProps) {
   return (
     <NextLink href={href} passHref>
       {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
@@ -13,8 +17,3 @@ export default function Link({ children, href, ...props }) {
     </NextLink>
   );
 }
-
-Link.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.any]).isRequired,
-  href: PropTypes.string.isRequired,
-};

@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import { Lottie } from '@crello/react-lottie';
 
 import db from '../../db.json';
@@ -32,7 +31,11 @@ function LoadingWidget() {
   );
 }
 
-function ResultWidget({ results }) {
+interface ResultWidgetProps {
+  results: boolean[];
+}
+
+function ResultWidget({ results }: ResultWidgetProps) {
   const {
     query: { name },
   } = useRouter();
@@ -73,13 +76,21 @@ function ResultWidget({ results }) {
   );
 }
 
+interface QuestionWidgetProps {
+  totalQuestions: number;
+  questionIndex: number;
+  question: any;
+  onSubmit: () => void;
+  addResult: (isCorrect: boolean) => void;
+}
+
 function QuestionWidget({
   question,
   questionIndex,
   totalQuestions,
   onSubmit,
   addResult,
-}) {
+}: QuestionWidgetProps) {
   const [selectedAlternative, setSelectedAlternative] = React.useState(undefined);
   const [isQuestionSubmited, setIsQuestionSubmited] = React.useState(false);
   const questionId = `question__${questionIndex}`;
@@ -209,22 +220,10 @@ export default function QuizPage() {
           />
         )}
 
-        {screenState === screenStates.LOADING && <LoadingWidget /> }
+        {screenState === screenStates.LOADING && <LoadingWidget />}
 
-        {screenState === screenStates.RESULT && <ResultWidget results={results} /> }
+        {screenState === screenStates.RESULT && <ResultWidget results={results} />}
       </QuizContainer>
     </QuizBackground>
   );
 }
-
-ResultWidget.propTypes = {
-  results: PropTypes.oneOfType([PropTypes.array]).isRequired,
-};
-
-QuestionWidget.propTypes = {
-  totalQuestions: PropTypes.number.isRequired,
-  questionIndex: PropTypes.number.isRequired,
-  question: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  addResult: PropTypes.func.isRequired,
-};

@@ -1,9 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import Link from '../Link';
 
-const StyledLink = styled(Link)`
+interface StyledLinkProps {
+  href: string;
+  style: any;
+}
+
+const StyledLink = styled(Link)<StyledLinkProps>`
   transition: .3s;
   &:hover {
     opacity: .5;
@@ -14,7 +18,11 @@ const SVG = styled.svg`
   vertical-align: middle;
 `;
 
-export default function BackLinkArrow({ href }) {
+interface BackLinkArrowProps {
+  href: string;
+}
+
+export default function BackLinkArrow({ href }: BackLinkArrowProps) {
   return (
     <StyledLink href={href} style={{ width: '24px', height: '24px', display: 'inline-block' }}>
       <SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -23,7 +31,3 @@ export default function BackLinkArrow({ href }) {
     </StyledLink>
   );
 }
-
-BackLinkArrow.propTypes = {
-  href: PropTypes.string.isRequired,
-};

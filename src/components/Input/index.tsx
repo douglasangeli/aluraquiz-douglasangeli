@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const InputBase = styled.input`
@@ -14,7 +13,14 @@ const InputBase = styled.input`
   margin-bottom: 25px;
 `;
 
-export default function Input({ onChange, placeholder, ...props }) {
+interface InputProps {
+  onChange?: (e: any) => void;
+  placeholder: string;
+  name: string;
+  value: string;
+}
+
+export default function Input({ onChange, placeholder, ...props }: InputProps) {
   return (
     <div>
       <InputBase
@@ -26,10 +32,3 @@ export default function Input({ onChange, placeholder, ...props }) {
     </div>
   );
 }
-
-Input.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-};

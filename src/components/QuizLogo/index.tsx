@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+interface LogoProps {
+  className: string;
+}
 
 function Logo({ className }) {
   return (
@@ -29,11 +32,7 @@ function Logo({ className }) {
   );
 }
 
-Logo.propTypes = {
-  className: PropTypes.string.isRequired,
-};
-
-const QuizLogo = styled(Logo)`
+const QuizLogo: React.FC<LogoProps> = styled(Logo)`
   margin: auto;
   display: block;
   @media screen and (max-width: 500px) {

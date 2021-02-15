@@ -1,7 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { createGlobalStyle, ThemeProps, ThemeProvider } from 'styled-components';
 import db from '../db.json';
+import { AppTheme } from '../src/core/app-theme';
 
 const GlobalStyle = createGlobalStyle`
  * {
@@ -15,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
     flex-direction: column;
     font-family: 'Lato', sans-serif;
     // Deixa branco no começo
-    color: ${({ theme }) => theme.colors.contrastText};
+    color: ${(appTheme: ThemeProps<AppTheme>) => appTheme.theme.colors.contrastText};
   }
   html, body {
     min-height: 100vh;
@@ -29,7 +30,6 @@ const GlobalStyle = createGlobalStyle`
 
 const { theme } = db;
 
-// eslint-disable-next-line react/prop-types
 export default function App({ Component, pageProps }) {
   return (
     <>

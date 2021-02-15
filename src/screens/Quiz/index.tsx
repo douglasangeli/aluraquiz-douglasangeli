@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import { Lottie } from '@crello/react-lottie';
 
 // import db from '../../../db.json';
@@ -31,7 +30,11 @@ function LoadingWidget() {
   );
 }
 
-function ResultWidget({ results }) {
+interface ResultWidgetProps {
+  results: boolean[];
+}
+
+function ResultWidget({ results }: ResultWidgetProps) {
   const {
     query: { name },
   } = useRouter();
@@ -72,13 +75,21 @@ function ResultWidget({ results }) {
   );
 }
 
+interface QuestionWidgetProps{
+  totalQuestions: number;
+  questionIndex: number;
+  question: any;
+  onSubmit: Function;
+  addResult: Function;
+}
+
 function QuestionWidget({
   question,
   questionIndex,
   totalQuestions,
   onSubmit,
   addResult,
-}) {
+}: QuestionWidgetProps) {
   const [selectedAlternative, setSelectedAlternative] = React.useState(undefined);
   const [isQuestionSubmited, setIsQuestionSubmited] = React.useState(false);
   const questionId = `question__${questionIndex}`;
@@ -157,7 +168,12 @@ const screenStates = {
   RESULT: 'RESULT',
 };
 
-export default function QuizPage({ externalQuestions, externalBg }) {
+interface QuizPageProps {
+  externalQuestions: object[];
+  externalBg: string;
+}
+
+export default function QuizPage({ externalQuestions, externalBg }: QuizPageProps) {
   const [screenState, setScreenState] = React.useState(screenStates.LOADING);
   const [results, setResults] = React.useState([]);
   const totalQuestions = externalQuestions.length;
@@ -166,7 +182,7 @@ export default function QuizPage({ externalQuestions, externalBg }) {
   const question = externalQuestions[questionIndex];
   const bg = externalBg;
 
-  function addResult(result) {
+  function addResult(result: any) {
     setResults([
       ...results,
       result,
@@ -208,27 +224,10 @@ export default function QuizPage({ externalQuestions, externalBg }) {
           />
         )}
 
-        {screenState === screenStates.LOADING && <LoadingWidget /> }
+        {screenState === screenStates.LOADING && <LoadingWidget />}
 
-        {screenState === screenStates.RESULT && <ResultWidget results={results} /> }
+        {screenState === screenStates.RESULT && <ResultWidget results={results} />}
       </QuizContainer>
     </QuizBackground>
   );
 }
-
-QuizPage.propTypes = {
-  externalQuestions: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  externalBg: PropTypes.string.isRequired,
-};
-
-ResultWidget.propTypes = {
-  results: PropTypes.oneOfType([PropTypes.array]).isRequired,
-};
-
-QuestionWidget.propTypes = {
-  totalQuestions: PropTypes.number.isRequired,
-  questionIndex: PropTypes.number.isRequired,
-  question: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  addResult: PropTypes.func.isRequired,
-};

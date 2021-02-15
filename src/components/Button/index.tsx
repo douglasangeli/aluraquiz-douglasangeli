@@ -1,7 +1,11 @@
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Button = styled.button`
+interface ButtonProps {
+  type: 'submit' | 'type' | 'button';
+  children: React.ReactNode;
+}
+
+const Button = styled.button<ButtonProps>`
   background-color: ${({ theme }) => theme.colors.secondary};
   color: ${({ theme }) => theme.colors.contrastText};
   border-radius: ${({ theme }) => theme.borderRadius};
@@ -25,10 +29,5 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
-
-Button.propTypes = {
-  type: PropTypes.oneOf(['submit', 'type', 'button']).isRequired,
-  children: PropTypes.node.isRequired,
-};
 
 export default Button;
